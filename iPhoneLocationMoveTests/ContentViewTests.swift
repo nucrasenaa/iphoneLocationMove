@@ -45,7 +45,12 @@ final class ContentViewTests: XCTestCase {
         defer { removeFromWindow(window) }
 
         await waitForViewUpdate(hostingView)
-        XCTAssertTrue(hasButtonTitle("加入最愛", in: hostingView))
+        XCTAssertTrue(
+            hasButtonTitle(
+                L10n.text(.favoriteAdd, language: .english),
+                in: hostingView
+            )
+        )
         let addToggle = try XCTUnwrap(
             findButton(in: hostingView, identifier: "favorite-toggle-add-action")
         )
@@ -53,14 +58,24 @@ final class ContentViewTests: XCTestCase {
         addToggle.performClick(nil)
         await waitForViewUpdate(hostingView)
         XCTAssertEqual(favoritesStore.favorites.count, 1)
-        XCTAssertTrue(hasButtonTitle("取消最愛", in: hostingView))
+        XCTAssertTrue(
+            hasButtonTitle(
+                L10n.text(.favoriteRemove, language: .english),
+                in: hostingView
+            )
+        )
         let removeToggle = try XCTUnwrap(
             findButton(in: hostingView, identifier: "favorite-toggle-remove-action")
         )
         removeToggle.performClick(nil)
         await waitForViewUpdate(hostingView)
         XCTAssertTrue(favoritesStore.favorites.isEmpty)
-        XCTAssertTrue(hasButtonTitle("加入最愛", in: hostingView))
+        XCTAssertTrue(
+            hasButtonTitle(
+                L10n.text(.favoriteAdd, language: .english),
+                in: hostingView
+            )
+        )
         XCTAssertTrue(hasIdentifier("sidebar-button-favorite-toggle", in: hostingView))
     }
 
@@ -500,7 +515,10 @@ final class ContentViewTests: XCTestCase {
         defer { removeFromWindow(window) }
 
         let queryField = try XCTUnwrap(
-            findTextField(in: hostingView, placeholder: "搜尋地名或地址")
+            findTextField(
+                in: hostingView,
+                placeholder: L10n.text(.searchPlaceholder, language: .english)
+            )
         )
         XCTAssertEqual(queryField.stringValue, "保留中的搜尋")
 
@@ -698,7 +716,7 @@ final class ContentViewTests: XCTestCase {
         XCTAssertEqual(interruption.reason, .usbDisconnected)
         XCTAssertEqual(
             DeviceFailurePresentation.make(for: failure).title,
-            "USB 已中斷"
+            L10n.text(.usbDisconnected, language: .english)
         )
         XCTAssertNotNil(
             layoutRegion(in: hostingView, identifier: "sidebar-simulation-error-region")
@@ -1588,7 +1606,7 @@ final class ContentViewTests: XCTestCase {
         for _ in 0 ..< 100 {
             mapView.window?.displayIfNeeded()
             if let annotation = mapView.annotations.first(where: {
-                $0.title == "預覽"
+                $0.title == L10n.text(.previewAnnotation, language: .english)
                     && abs($0.coordinate.latitude - coordinate.latitude)
                         < 0.000_001
                     && abs($0.coordinate.longitude - coordinate.longitude)

@@ -184,27 +184,27 @@ extension LocationMapError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidCoordinate:
-            "座標無效。"
+            L10n.text(.invalidCoordinate)
         case .invalidSearchQuery:
-            "請輸入要搜尋的地名或地址。"
+            L10n.text(.invalidSearchQuery)
         case .invalidSpeed:
-            "步行速度必須介於 1–7 km/h。"
+            L10n.text(.invalidSpeed)
         case .invalidRoute:
-            "MapKit 回傳的步行路線資料無效。"
+            L10n.text(.invalidRoute)
         case .missingPreview:
-            "請先在地圖上預覽一個位置。"
+            L10n.text(.missingPreview)
         case .missingEndpoints:
-            "請先選擇 A 與 B。"
+            L10n.text(.missingEndpoints)
         case .endpointsMustDiffer:
-            "A 與 B 必須是不同位置。"
+            L10n.text(.endpointsMustDiffer)
         case .staleSearchSelection:
-            "搜尋結果已過期，請重新選擇。"
+            L10n.text(.staleSearchSelection)
         case .routePreviewUnavailable:
-            "目前沒有可確認的步行路線。"
+            L10n.text(.routePreviewUnavailable)
         case .macLocationUnavailable:
-            "尚未取得 Mac 目前位置。"
+            L10n.text(.macLocationUnavailable)
         case .identityExhausted:
-            "要求識別碼已用盡，請重新啟動 App。"
+            L10n.text(.identityExhausted)
         }
     }
 }
@@ -445,7 +445,7 @@ final class LocationMapModel: ObservableObject {
                 routePreview = nil
                 routeStatus = .transientFailure(
                     message: LocationMapError.invalidRoute.errorDescription
-                        ?? "MapKit 回傳的步行路線資料無效。"
+                        ?? L10n.text(.invalidRoute)
                 )
                 throw LocationMapError.invalidRoute
             }
@@ -483,7 +483,7 @@ final class LocationMapModel: ObservableObject {
             routeCameraIdentity = nil
             routeStatus = .transientFailure(
                 message: normalizedMessage.isEmpty
-                    ? "暫時無法取得步行路線"
+                    ? L10n.text(.transientRouteFailure)
                     : normalizedMessage
             )
             return .transientFailure

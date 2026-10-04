@@ -8,13 +8,13 @@ struct ResetConfirmationContent: Equatable {
     static func make(hasCleanupOwnership: Bool) -> Self {
         if hasCleanupOwnership {
             return Self(
-                title: "確認重置並停止模擬？",
-                message: "只有手機回覆 clear 成功後，App 才會顯示已恢復真實定位。"
+                title: L10n.text(.resetStopTitle),
+                message: L10n.text(.resetStopMessage)
             )
         }
         return Self(
-            title: "確認重置設定？",
-            message: "將清除搜尋、A/B 端點與路線設定。"
+            title: L10n.text(.resetSettingsTitle),
+            message: L10n.text(.resetSettingsMessage)
         )
     }
 }
@@ -33,9 +33,9 @@ private struct ResetConfirmationDialogModifier: ViewModifier {
                 isPresented: $isPresented,
                 titleVisibility: .visible
             ) {
-                Button("重置", role: .destructive, action: performReset)
+                Button(L10n.text(.reset), role: .destructive, action: performReset)
                     .accessibilityIdentifier("workspace-reset-confirm")
-                Button("取消", role: .cancel) {}
+                Button(L10n.text(.cancel), role: .cancel) {}
             } message: {
                 Text(confirmation.message)
             }
@@ -46,6 +46,7 @@ private struct ResetConfirmationDialogModifier: ViewModifier {
 }
 
 struct LocationMapView: View {
+    @ObservedObject private var languageStore = AppLanguageStore.shared
     @StateObject private var model: LocationMapModel
     @ObservedObject private var favoritesStore: FavoritesStore
     @ObservedObject private var macLocationCoordinator: MacLocationCoordinator
@@ -154,6 +155,7 @@ struct LocationMapView: View {
                 macLocation: model.macLocationCoordinate,
                 macInitialCenterIntent: model.macInitialCenterIntent,
                 macRecenterIntent: model.macRecenterIntent,
+                language: languageStore.language,
                 onCoordinateSelected: selectMapCoordinate,
                 onManualCameraInteraction: model.recordManualCameraInteraction
             )
@@ -169,6 +171,7 @@ struct LocationMapView: View {
                 macInitialCenterIntent: model.macInitialCenterIntent,
                 macRecenterIntent: model.macRecenterIntent,
                 confirmedRouteMarkerCoordinate: nil,
+                language: languageStore.language,
                 onCoordinateSelected: selectMapCoordinate,
                 onManualCameraInteraction: model.recordManualCameraInteraction
             )
@@ -177,12 +180,12 @@ struct LocationMapView: View {
 
     private var controls: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                Text("地圖與路線")
+            VStack(alignment: .leading, spacing: 12) {
+                Text(L10n.text(.mapAndRoute))
                     .font(.title2)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Button("到 Mac 位置") {
+                    Button(L10n.text(.recenterMac)) {
                         do {
                             try model.requestMacRecenter()
                             message = nil
@@ -258,16 +261,16 @@ struct LocationMapView: View {
 
     private var searchControls: some View {
         VStack(alignment: .leading, spacing: 8) {
-            TextField("搜尋地名或地址", text: $query)
+            TextField(L10n.text(.searchPlaceholder), text: $query)
                 .textFieldStyle(.roundedBorder)
                 .accessibilityIdentifier("workspace-search-query")
                 .onSubmit(performSearch)
 
             HStack(spacing: 8) {
-                Button("搜尋", action: performSearch)
+                Button(L10n.text(.search), action: performSearch)
                     .disabled(query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     .testingLayoutRegion("sidebar-button-search")
-                Button("清除") {
+                Button(L10n.text(.clear)) {
                     cancelSearch()
                     cancelPreviewAddressLookup()
                     query = ""
@@ -288,7 +291,7 @@ struct LocationMapView: View {
     private var searchResults: some View {
         if !model.searchResults.isEmpty {
             VStack(alignment: .leading, spacing: 6) {
-                Text("搜尋結果")
+                Text(L10n.text(.searchResults))
                     .font(.headline)
                 ForEach(
                     Array(model.searchResults.enumerated()),
@@ -298,7 +301,7 @@ struct LocationMapView: View {
                         selectSearchResult(place)
                     } label: {
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(place.address ?? "未命名地點")
+                            Text(place.address ?? L10n.text(.unnamedPlace))
                             Text(coordinateText(place.coordinate))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
@@ -327,13 +330,13 @@ struct LocationMapView: View {
     @ViewBuilder
     private var previewControls: some View {
         if let preview = model.preview {
-            GroupBox("目前預覽") {
+            GroupBox(L10n.text(.currentPreview)) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(preview.address ?? "地圖選點")
+                    Text(preview.address ?? L10n.text(.mapPoint))
                     Text(coordinateText(preview.coordinate))
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Text("選點只會更新預覽；必須另行確認後才會改變 iPhone 位置。")
+                    Text(L10n.text(.previewNotice))
                         .font(.caption)
 
                     HStack(spacing: 8) {
@@ -363,11 +366,11 @@ struct LocationMapView: View {
                             .allowsHitTesting(false)
                             #endif
                         }
-                        Button("設為 A") {
+                        Button(L10n.text(.setA)) {
                             assignPreview(to: .a)
                         }
                         .testingLayoutRegion("sidebar-button-endpoint-a")
-                        Button("設為 B") {
+                        Button(L10n.text(.setB)) {
                             assignPreview(to: .b)
                         }
                         .testingLayoutRegion("sidebar-button-endpoint-b")
@@ -395,7 +398,7 @@ struct LocationMapView: View {
         if !favoritesStore.favorites.isEmpty {
             VStack(alignment: .leading, spacing: 6) {
                 Divider()
-                Text("我的最愛")
+                Text(L10n.text(.favorites))
                     .font(.headline)
                 if favoritesStore.favorites.count > Self.favoritesVisibleRowLimit {
                     ScrollView {
@@ -422,7 +425,7 @@ struct LocationMapView: View {
     private func favoriteRow(_ favorite: FavoritePlace) -> some View {
         Group {
             if editingFavoriteID == favorite.id {
-                TextField("名稱", text: $favoriteDraft)
+                TextField(L10n.text(.name), text: $favoriteDraft)
                     .textFieldStyle(.roundedBorder)
                     .accessibilityIdentifier("favorite-name-editor-\(favorite.id.uuidString)")
                     .focused($favoriteFieldIsFocused)
@@ -486,10 +489,10 @@ struct LocationMapView: View {
                     #endif
                 }
                 .contextMenu {
-                    Button("重新命名") {
+                    Button(L10n.text(.rename)) {
                         beginFavoriteRename(favorite)
                     }
-                    Button("刪除", role: .destructive) {
+                    Button(L10n.text(.delete), role: .destructive) {
                         favoritesStore.remove(id: favorite.id)
                     }
                 }
@@ -526,17 +529,19 @@ struct LocationMapView: View {
     }
 
     private func favoriteToggleTitle(for preview: MapSearchPlace) -> String {
-        favoritesStore.isFavorite(preview.coordinate) ? "取消最愛" : "加入最愛"
+        favoritesStore.isFavorite(preview.coordinate)
+            ? L10n.text(.favoriteRemove)
+            : L10n.text(.favoriteAdd)
     }
 
     private var endpointControls: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("步行端點")
+            Text(L10n.text(.walkingEndpoints))
                 .font(.headline)
             endpointRow(label: "A", place: model.endpointA)
             endpointRow(label: "B", place: model.endpointB)
 
-            Button("建立步行路線", action: performDirections)
+            Button(L10n.text(.createWalkingRoute), action: performDirections)
                 .disabled(model.endpointSnapshot == nil)
                 .mapSidebarPrimaryActionLayout()
                 .testingLayoutRegion("sidebar-button-directions")
@@ -546,9 +551,9 @@ struct LocationMapView: View {
     private var routeControls: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("速度")
+                Text(L10n.text(.speed))
                 Spacer()
-                Text(String(format: "%.1f km/h", model.walkingSpeedKilometersPerHour))
+                Text(L10n.format(.speedValue, model.walkingSpeedKilometersPerHour))
                     .monospacedDigit()
             }
             .testingLayoutRegion("sidebar-speed-region")
@@ -582,28 +587,28 @@ struct LocationMapView: View {
             case .idle:
                 EmptyView()
             case .loading:
-                ProgressView("正在取得步行路線…")
+                ProgressView(L10n.text(.gettingWalkingRoute))
             case .routeAvailable:
                 if let route = model.routePreview {
                     Text(
                         "\(distanceText(route.distance))・\(durationText(route.estimatedTime))"
                     )
                     .font(.headline)
-                    Text("路線已可供確認開始。")
+                    Text(L10n.text(.routeReady))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
             case .noPedestrianRoute:
-                Text("A 與 B 之間沒有可用的步行路線。")
+                Text(L10n.text(.noWalkingRoute))
                     .foregroundStyle(.red)
             case .cancelled:
-                Text("已取消步行路線要求。")
+                Text(L10n.text(.routeCancelled))
                     .foregroundStyle(.secondary)
             case .transientFailure(let message):
                 Text(message)
                     .foregroundStyle(.red)
                     .testingLayoutRegion("sidebar-route-error-region")
-                Button("重試", action: performDirections)
+                Button(L10n.text(.retry), action: performDirections)
                     .mapSidebarPrimaryActionLayout()
                     .testingLayoutRegion("sidebar-button-directions-retry")
             }
@@ -622,7 +627,7 @@ struct LocationMapView: View {
                 Text(place.address ?? coordinateText(place.coordinate))
                     .lineLimit(2)
             } else {
-                Text("尚未選擇")
+                Text(L10n.text(.notSelected))
                     .foregroundStyle(.secondary)
             }
         }
@@ -654,7 +659,10 @@ struct LocationMapView: View {
                     guard request.generation == model.mapSearchGeneration else {
                         return
                     }
-                    message = "搜尋失敗：\(error.localizedDescription)"
+                    message = L10n.format(
+                        .searchFailed,
+                        error.localizedDescription
+                    )
                 }
                 if activeSearch === search {
                     activeSearch = nil
@@ -789,7 +797,10 @@ struct LocationMapView: View {
                 guard request.generation == model.mapSearchGeneration else {
                     return
                 }
-                message = "地址查詢失敗：\(error.localizedDescription)"
+                message = L10n.format(
+                    .addressLookupFailed,
+                    error.localizedDescription
+                )
             }
             if activeGeocoder === geocoder {
                 activeGeocoder = nil
@@ -878,13 +889,13 @@ struct LocationMapView: View {
 
     private func distanceText(_ meters: Double) -> String {
         if meters >= 1_000 {
-            return String(format: "%.2f km", meters / 1_000)
+            return L10n.format(.distanceKilometers, meters / 1_000)
         }
-        return String(format: "%.0f m", meters)
+        return L10n.format(.distanceMeters, meters)
     }
 
     private func durationText(_ seconds: TimeInterval) -> String {
-        String(format: "%.0f 分鐘", seconds / 60)
+        L10n.format(.durationMinutes, seconds / 60)
     }
 
     private func show(_ error: Error) {
@@ -949,7 +960,7 @@ struct LocationMapView: View {
                 presentConfirmation: presentResetConfirmation
             )
         } else {
-            Button("Reset", role: .destructive) {
+            Button(L10n.text(.reset), role: .destructive) {
                 presentResetConfirmation()
             }
             .background {
@@ -983,7 +994,7 @@ private struct ObservedWorkspaceResetButton: View {
     let presentConfirmation: () -> Void
 
     var body: some View {
-        Button("Reset", role: .destructive) {
+        Button(L10n.text(.reset), role: .destructive) {
             presentConfirmation()
         }
         .disabled(simulationIsBusy(simulationStore.state))
@@ -1018,19 +1029,19 @@ private struct DisconnectedSimulationControls: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Divider()
-            Text("iPhone 定位")
+            Text(L10n.text(.iPhoneLocation))
                 .font(.headline)
-            Button("設定位置") {}
+            Button(L10n.text(.setLocation)) {}
                 .disabled(true)
                 .mapSidebarPrimaryActionLayout()
                 .testingLayoutRegion("sidebar-button-set-location")
-            Toggle("往返循環", isOn: $roundTrip)
+            Toggle(L10n.text(.roundTrip), isOn: $roundTrip)
                 .disabled(true)
-            Button("開始步行路線") {}
+            Button(L10n.text(.startWalkingRoute)) {}
                 .disabled(true)
                 .mapSidebarPrimaryActionLayout()
                 .testingLayoutRegion("sidebar-button-start-route")
-            Text("完成裝置準備後即可使用定位控制。")
+            Text(L10n.text(.deviceReadyForLocationControl))
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .testingLayoutRegion("sidebar-device-status-region")
@@ -1062,11 +1073,11 @@ private struct SimulationControls: View {
         VStack(alignment: .leading, spacing: 10) {
             Divider()
 
-            Text("iPhone 定位")
+            Text(L10n.text(.iPhoneLocation))
                 .font(.headline)
 
             if mapModel.preview != nil {
-                Button("設定位置") {
+                Button(L10n.text(.setLocation)) {
                     guard let coordinate = mapModel.preview?.coordinate else {
                         return
                     }
@@ -1077,7 +1088,7 @@ private struct SimulationControls: View {
                 .testingLayoutRegion("sidebar-button-set-location")
             }
 
-            Toggle("往返循環", isOn: $roundTrip)
+            Toggle(L10n.text(.roundTrip), isOn: $roundTrip)
                 .disabled(!mapModel.canStartRoute || isBusy)
                 .accessibilityIdentifier("round-trip-toggle")
                 .background {
@@ -1094,7 +1105,7 @@ private struct SimulationControls: View {
                     #endif
                 }
 
-            Button("開始步行路線") {
+            Button(L10n.text(.startWalkingRoute)) {
                 do {
                     pendingMutation = .route(
                         try mapModel.confirmRoutePreview()
@@ -1141,7 +1152,7 @@ private struct SimulationControls: View {
             Button(confirmationButtonTitle) {
                 performConfirmedMutation()
             }
-            Button("取消", role: .cancel) {
+            Button(L10n.text(.cancel), role: .cancel) {
                 pendingMutation = nil
             }
         } message: {
@@ -1155,7 +1166,7 @@ private struct SimulationControls: View {
             HStack(spacing: 8) {
                 switch route.phase {
                 case .running:
-                    Button("暫停") {
+                    Button(L10n.text(.pause)) {
                         do {
                             try simulationStore.pause()
                             message = nil
@@ -1165,7 +1176,7 @@ private struct SimulationControls: View {
                     }
                     .testingLayoutRegion("sidebar-button-pause-route")
                 case .paused:
-                    Button("繼續") {
+                    Button(L10n.text(.resume)) {
                         do {
                             try simulationStore.resume(
                                 at: ProcessInfo.processInfo.systemUptime
@@ -1184,7 +1195,7 @@ private struct SimulationControls: View {
         }
 
         if hasCleanupOwnership {
-            Button("停止模擬", role: .destructive) {
+            Button(L10n.text(.stopSimulation), role: .destructive) {
                 pendingMutation = .stop
             }
             .disabled(isStoppingWithoutFailure)
@@ -1197,19 +1208,23 @@ private struct SimulationControls: View {
     private var simulationStatus: some View {
         switch simulationStore.state {
         case .idle:
-            Text("未啟用模擬定位")
+            Text(L10n.text(.notSimulating))
                 .foregroundStyle(.secondary)
         case .starting(let mode, _):
-            ProgressView(mode == .point ? "正在設定位置…" : "正在開始路線…")
+            ProgressView(
+                mode == .point
+                    ? L10n.text(.settingLocation)
+                    : L10n.text(.startingRoute)
+            )
         case .reconnecting:
-            ProgressView("正在重新準備裝置…")
+            ProgressView(L10n.text(.preparingDeviceAgain))
                 .testingLayoutRegion("sidebar-simulation-reconnecting-region")
         case .replacing:
-            ProgressView("正在安全取代目前模式…")
+            ProgressView(L10n.text(.replacingSimulation))
         case .pointActive(let point):
             Label(
                 String(
-                    format: "單點定位 %.6f, %.6f",
+                    format: L10n.text(.pointLocation),
                     point.coordinate.latitude,
                     point.coordinate.longitude
                 ),
@@ -1220,7 +1235,7 @@ private struct SimulationControls: View {
                 Text(routePhaseText(route.phase))
                 Text(
                     String(
-                        format: "已確認 %.0f m・%.1f km/h",
+                        format: L10n.text(.confirmedProgress),
                         route.confirmedDistance,
                         route.speedKilometersPerHour
                     )
@@ -1236,11 +1251,11 @@ private struct SimulationControls: View {
             }
         case .interrupted(_, let interruption, let failure):
             VStack(alignment: .leading, spacing: 4) {
-                Text("模擬已中斷")
+                Text(L10n.text(.simulationInterrupted))
                     .foregroundStyle(.red)
                 Text(interruption.positionKnowledge == .unknown
-                    ? "目前無法確認手機端位置。"
-                    : "手機端位置仍可確認。")
+                    ? L10n.text(.phoneLocationUnknown)
+                    : L10n.text(.phoneLocationKnown))
                 Text(failureText(failure))
                     .font(.caption)
             }
@@ -1248,14 +1263,14 @@ private struct SimulationControls: View {
         case .stopping(_, let failure):
             if let failure {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("清除定位失敗，尚未恢復真實位置。")
+                    Text(L10n.text(.clearFailedNotRestored))
                         .foregroundStyle(.red)
                     Text(failureText(failure))
                         .font(.caption)
                 }
                 .testingLayoutRegion("sidebar-simulation-error-region")
             } else {
-                ProgressView("正在清除模擬定位…")
+                ProgressView(L10n.text(.clearingSimulation))
             }
         }
     }
@@ -1280,20 +1295,20 @@ private struct SimulationControls: View {
         case .point, .route:
             RiskNotice.simulationStart.title
         case .stop:
-            "確認停止並清除定位？"
+            L10n.text(.confirmStopClearTitle)
         case nil:
-            "確認操作"
+            L10n.text(.confirmation)
         }
     }
 
     private var confirmationButtonTitle: String {
         switch pendingMutation {
         case .stop:
-            "停止並清除"
+            L10n.text(.stopAndClear)
         case .point, .route:
             RiskNotice.simulationStart.confirmationTitle
         case nil:
-            "確認"
+            L10n.text(.confirmation)
         }
     }
 
@@ -1302,7 +1317,7 @@ private struct SimulationControls: View {
         case .point, .route:
             RiskNotice.simulationStart.message
         case .stop:
-            "只有手機回覆 clear 成功後，App 才會顯示已恢復真實定位。"
+            L10n.text(.resetStopMessage)
         case nil:
             ""
         }
@@ -1362,21 +1377,21 @@ private struct SimulationControls: View {
     private func routePhaseText(_ phase: RouteSessionPhase) -> String {
         switch phase {
         case .idle:
-            "路線未開始"
+            L10n.text(.routeNotStarted)
         case .preview:
-            "路線預覽"
+            L10n.text(.routePreview)
         case .running:
-            "路線移動中"
+            L10n.text(.routeMoving)
         case .pausing:
-            "正在確認暫停位置"
+            L10n.text(.confirmingPauseLocation)
         case .paused:
-            "路線已暫停"
+            L10n.text(.routePaused)
         case .completed:
-            "單程已完成，維持終點位置"
+            L10n.text(.oneWayCompleted)
         case .interrupted:
-            "路線已中斷"
+            L10n.text(.routeInterrupted)
         case .stopping:
-            "正在停止路線"
+            L10n.text(.stoppingRoute)
         }
     }
 
@@ -1413,7 +1428,11 @@ private func simulationHasCleanupOwnership(
 
 private func simulationFailureText(_ failure: DeviceLocationError) -> String {
     let presentation = DeviceFailurePresentation.make(for: failure)
-    return "\(presentation.title)：\(presentation.message)"
+    return L10n.format(
+        .failureSummary,
+        presentation.title,
+        presentation.message
+    )
 }
 
 private extension View {
@@ -1712,6 +1731,7 @@ private struct ObservedSimulationMapCanvas: View {
     let macLocation: MapCoordinate?
     let macInitialCenterIntent: MacInitialCenterIntent?
     let macRecenterIntent: MacRecenterIntent?
+    let language: AppLanguage
     let onCoordinateSelected: (MapCoordinate) -> Void
     let onManualCameraInteraction: () -> Void
 
@@ -1729,6 +1749,7 @@ private struct ObservedSimulationMapCanvas: View {
             confirmedRouteMarkerCoordinate: mapCoordinate(
                 from: simulationStore.confirmedRouteMarkerCoordinate
             ),
+            language: language,
             onCoordinateSelected: onCoordinateSelected,
             onManualCameraInteraction: onManualCameraInteraction
         )
@@ -1758,6 +1779,7 @@ struct LocationMapCanvas: NSViewRepresentable {
     let macInitialCenterIntent: MacInitialCenterIntent?
     let macRecenterIntent: MacRecenterIntent?
     let confirmedRouteMarkerCoordinate: MapCoordinate?
+    let language: AppLanguage
     let onCoordinateSelected: (MapCoordinate) -> Void
     let onManualCameraInteraction: () -> Void
 
@@ -1772,6 +1794,7 @@ struct LocationMapCanvas: NSViewRepresentable {
         macInitialCenterIntent: MacInitialCenterIntent?,
         macRecenterIntent: MacRecenterIntent? = nil,
         confirmedRouteMarkerCoordinate: MapCoordinate?,
+        language: AppLanguage = .defaultLanguage,
         onCoordinateSelected: @escaping (MapCoordinate) -> Void,
         onManualCameraInteraction: @escaping () -> Void
     ) {
@@ -1785,6 +1808,7 @@ struct LocationMapCanvas: NSViewRepresentable {
         self.macInitialCenterIntent = macInitialCenterIntent
         self.macRecenterIntent = macRecenterIntent
         self.confirmedRouteMarkerCoordinate = confirmedRouteMarkerCoordinate
+        self.language = language
         self.onCoordinateSelected = onCoordinateSelected
         self.onManualCameraInteraction = onManualCameraInteraction
     }
@@ -1812,6 +1836,7 @@ struct LocationMapCanvas: NSViewRepresentable {
         context.coordinator.onCoordinateSelected = onCoordinateSelected
         context.coordinator.onManualCameraInteraction =
             onManualCameraInteraction
+        context.coordinator.language = language
         context.coordinator.update(
             preview: preview,
             previewCameraIntent: previewCameraIntent,
@@ -1822,7 +1847,8 @@ struct LocationMapCanvas: NSViewRepresentable {
             macLocation: macLocation,
             macInitialCenterIntent: macInitialCenterIntent,
             macRecenterIntent: macRecenterIntent,
-            confirmedRouteMarkerCoordinate: confirmedRouteMarkerCoordinate
+            confirmedRouteMarkerCoordinate: confirmedRouteMarkerCoordinate,
+            language: language
         )
     }
 
@@ -1838,6 +1864,7 @@ struct LocationMapCanvas: NSViewRepresentable {
         weak var mapView: MKMapView?
         var onCoordinateSelected: (MapCoordinate) -> Void
         var onManualCameraInteraction: () -> Void
+        var language: AppLanguage = .defaultLanguage
         private let cameraEffects = LocationMapCameraEffects()
         private var annotations: [AnnotationRole: MKPointAnnotation] = [:]
         private var routeCoordinates: [MapCoordinate]?
@@ -1880,7 +1907,8 @@ struct LocationMapCanvas: NSViewRepresentable {
             macLocation: MapCoordinate?,
             macInitialCenterIntent: MacInitialCenterIntent?,
             macRecenterIntent: MacRecenterIntent? = nil,
-            confirmedRouteMarkerCoordinate: MapCoordinate?
+            confirmedRouteMarkerCoordinate: MapCoordinate?,
+            language: AppLanguage = .defaultLanguage
         ) {
             guard let mapView else {
                 return
@@ -1888,7 +1916,7 @@ struct LocationMapCanvas: NSViewRepresentable {
             syncAnnotation(
                 role: .preview,
                 coordinate: preview?.coordinate,
-                title: "預覽",
+                title: L10n.text(.previewAnnotation, language: language),
                 subtitle: preview?.address
             )
             syncAnnotation(
@@ -1906,12 +1934,12 @@ struct LocationMapCanvas: NSViewRepresentable {
             syncAnnotation(
                 role: .macLocation,
                 coordinate: macLocation,
-                title: "Mac 目前位置"
+                title: L10n.text(.macCurrentLocation, language: language)
             )
             syncAnnotation(
                 role: .confirmedRouteMarker,
                 coordinate: confirmedRouteMarkerCoordinate,
-                title: "iPhone 模擬位置"
+                title: L10n.text(.simulatedIPhoneLocation, language: language)
             )
             syncRoute(route)
 
@@ -2025,7 +2053,10 @@ struct LocationMapCanvas: NSViewRepresentable {
             if isConfirmedRouteMarker {
                 view.glyphImage = NSImage(
                     systemSymbolName: "iphone",
-                    accessibilityDescription: "iPhone 模擬位置"
+                    accessibilityDescription: L10n.text(
+                        .simulatedIPhoneLocation,
+                        language: language
+                    )
                 )
                 view.markerTintColor = .systemPurple
                 view.setAccessibilityIdentifier("iphone-route-marker")

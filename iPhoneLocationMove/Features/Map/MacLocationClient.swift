@@ -21,15 +21,15 @@ extension MacLocationClientError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .authorizationDenied, .authorizationRestricted:
-            "無法取得 Mac 位置；請在「系統設定 → 隱私權與安全性 → 定位服務」允許此 App 使用位置。"
+            L10n.text(.macLocationPermission)
         case .locationServicesDisabled:
-            "macOS 定位服務目前已關閉，無法取得 Mac 位置。"
+            L10n.text(.macLocationServicesDisabled)
         case .locationFailed, .invalidCoordinate:
-            "目前無法取得有效的 Mac 位置。"
+            L10n.text(.macLocationInvalid)
         case .requestInProgress:
-            "Mac 位置要求仍在進行中。"
+            L10n.text(.macLocationRequestInProgress)
         case .cancelled:
-            "Mac 位置要求已取消。"
+            L10n.text(.macLocationCancelled)
         }
     }
 }
@@ -328,6 +328,6 @@ final class MacLocationCoordinator: ObservableObject {
         {
             return description
         }
-        return "目前無法取得 Mac 位置。"
+        return L10n.text(.macLocationInvalid)
     }
 }

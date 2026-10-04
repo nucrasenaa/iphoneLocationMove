@@ -47,6 +47,8 @@
 		DE6187A6A0C69C354BA935AC /* AppLifecycleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BE49BA668D9D29110B9B5B /* AppLifecycleTests.swift */; };
 		DFB9B81C0AE47F3A9F49D44D /* pymobiledevice3.lock in Resources */ = {isa = PBXBuildFile; fileRef = 1C7D8072741EFD7D6A681120 /* pymobiledevice3.lock */; };
 		E9BD747E6111212036A7050B /* SimulationStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE974F5BA84AC3545A35AB0A /* SimulationStoreTests.swift */; };
+		EAA9E3E8E05B4C4C9AE7F9B1 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAA9E3E8E05B4C4C9AE7F9B0 /* Localization.swift */; };
+		EAA9E3E8E05B4C4C9AE7F9B2 /* LocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAA9E3E8E05B4C4C9AE7F9B3 /* LocalizationTests.swift */; };
 		F2624FF8CA05E230AF36CD2F /* LocationMapModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08D191987B2ADAA379934BC0 /* LocationMapModel.swift */; };
 		F5CA6726AC966325AAD94351 /* RouteSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14BE7BA1C7381D37283EAE3 /* RouteSession.swift */; };
 /* End PBXBuildFile section */
@@ -125,6 +127,8 @@
 		DB69C7AAD16E62538F94CB84 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		E14BE7BA1C7381D37283EAE3 /* RouteSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteSession.swift; sourceTree = "<group>"; };
 		E73901138E8F5E713591376A /* iPhoneLocationMoveTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iPhoneLocationMoveTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EAA9E3E8E05B4C4C9AE7F9B0 /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
+		EAA9E3E8E05B4C4C9AE7F9B3 /* LocalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationTests.swift; sourceTree = "<group>"; };
 		EE6718254E74C698E2F36E02 /* LocationMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationMapView.swift; sourceTree = "<group>"; };
 		EE6895E5CE97D10ED6E02DB1 /* RiskNoticeStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RiskNoticeStoreTests.swift; sourceTree = "<group>"; };
 		EEB35DF4BC6E9F90E3FE908E /* DiagnosticLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticLogger.swift; sourceTree = "<group>"; };
@@ -213,6 +217,7 @@
 				D85D42D9742C16E282411906 /* DisconnectReconnectIntegrationTests.swift */,
 				D4206CE779EBB4C8860C56C6 /* FavoritesStoreTests.swift */,
 				4B12E4A8F3296E1234B086F0 /* LocationMapModelTests.swift */,
+				EAA9E3E8E05B4C4C9AE7F9B3 /* LocalizationTests.swift */,
 				2969BAD05EABCF241CA945CC /* MacLocationClientTests.swift */,
 				D6509171DA5C07B771324165 /* PymobiledeviceAdapterTests.swift */,
 				EE6895E5CE97D10ED6E02DB1 /* RiskNoticeStoreTests.swift */,
@@ -278,6 +283,7 @@
 			children = (
 				900C1DF2377C49650214DA8B /* AppLifecycleCoordinator.swift */,
 				EEB35DF4BC6E9F90E3FE908E /* DiagnosticLogger.swift */,
+				EAA9E3E8E05B4C4C9AE7F9B0 /* Localization.swift */,
 				1B47024B88A1CC74782D38DE /* iPhoneLocationMoveApp.swift */,
 				71BC154167BB4FBC11520A20 /* RiskNoticeStore.swift */,
 				C33C39B75F30F97C5FD87F97 /* SystemSleepObserver.swift */,
@@ -444,6 +450,7 @@
 				1469CA4058F04BCA0CE4FBC9 /* SimulationStore.swift in Sources */,
 				2E811F185371ABA4502333D8 /* SystemSleepObserver.swift in Sources */,
 				1ED1F71B53DF0CFE152AFC55 /* iPhoneLocationMoveApp.swift in Sources */,
+				EAA9E3E8E05B4C4C9AE7F9B1 /* Localization.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -470,6 +477,7 @@
 				DAA5D5A513D88CEF3CF17411 /* DisconnectReconnectIntegrationTests.swift in Sources */,
 				8CD8A3D4D3953CC7556C0352 /* FavoritesStoreTests.swift in Sources */,
 				B9C08CE6E544F465DE98CE40 /* LocationMapModelTests.swift in Sources */,
+				EAA9E3E8E05B4C4C9AE7F9B2 /* LocalizationTests.swift in Sources */,
 				7E8D5D2B996F21934B130EE3 /* MacLocationClientTests.swift in Sources */,
 				1F872BCB56A6CC3813B1BFE1 /* PymobiledeviceAdapterTests.swift in Sources */,
 				916E46C74485E04A6670327F /* RiskNoticeStoreTests.swift in Sources */,

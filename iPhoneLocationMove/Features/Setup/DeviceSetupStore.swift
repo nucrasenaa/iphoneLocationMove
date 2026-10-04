@@ -348,7 +348,7 @@ enum PrivilegedHelperInstallError:
     var errorDescription: String? {
         switch self {
         case .authorizationDenied:
-            "使用者未核准 privileged helper。"
+            L10n.text(.helperNotApproved)
         case let .installFailed(message):
             message
         }
@@ -374,7 +374,7 @@ struct SMJobBlessTunnelHelperAuthorizer: TunnelHelperAuthorizing {
             try installer.install()
             guard installer.installed() else {
                 return .unavailable(
-                    "privileged helper 安裝完成，但 launchd 尚未註冊 service。"
+                    L10n.text(.helperInstalledNotRegistered)
                 )
             }
             return .enabled
@@ -446,7 +446,7 @@ struct SMJobBlessPrivilegedHelperInstaller: PrivilegedHelperInstalling {
               let authorization
         else {
             throw PrivilegedHelperInstallError.installFailed(
-                "無法建立管理員授權 session（\(createStatus)）。"
+                L10n.format(.authorizationSessionFailure, createStatus)
             )
         }
         defer {
@@ -486,7 +486,7 @@ struct SMJobBlessPrivilegedHelperInstaller: PrivilegedHelperInstalling {
                 throw PrivilegedHelperInstallError.authorizationDenied
             }
             throw PrivilegedHelperInstallError.installFailed(
-                "管理員授權失敗（\(authorizationStatus)）。"
+                L10n.format(.administratorAuthorizationFailure, authorizationStatus)
             )
         }
 
@@ -499,7 +499,7 @@ struct SMJobBlessPrivilegedHelperInstaller: PrivilegedHelperInstalling {
         ) else {
             let message = rawError
                 .map { CFErrorCopyDescription($0.takeRetainedValue()) as String }
-                ?? "SMJobBless 未提供錯誤資訊。"
+                ?? L10n.text(.smJobBlessFailure)
             throw PrivilegedHelperInstallError.installFailed(message)
         }
     }

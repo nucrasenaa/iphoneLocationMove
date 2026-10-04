@@ -52,6 +52,7 @@ purposes only**. By using this tool, you acknowledge and agree that:
 ## 功能特色
 
 - 原生 SwiftUI + MapKit 介面，支援地點搜尋與地圖選點。
+- 介面預設使用 English，並可從視窗上方工具列的地球圖示切換 English／ไทย；選擇會保存到下次啟動。
 - 單點定位：搜尋或點選地圖，確認後送出模擬位置。
 - A／B 步行路線：由 MapKit 產生真實步行路線，以 `1–7 km/h` 沿路線移動，
   支援暫停、繼續、調速與往返循環。

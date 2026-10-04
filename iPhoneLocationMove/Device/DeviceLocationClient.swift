@@ -313,74 +313,74 @@ struct DeviceFailurePresentation: Equatable, Sendable {
         switch failure {
         case .timeout:
             Self(
-                title: "裝置回覆逾時",
-                message: "位置結果無法確認，已停止後續更新。請檢查 USB 連線後重試。",
-                recoveryTitle: "重試",
+                title: L10n.text(.deviceReplyTimeout),
+                message: L10n.text(.deviceReplyTimeoutMessage),
+                recoveryTitle: L10n.text(.retry),
                 recoveryAction: .retry
             )
         case .usbDisconnected:
             Self(
-                title: "USB 已中斷",
-                message: "目前無法確認 iPhone 上的模擬位置。重新連接同一台 iPhone 後會先 clear。",
-                recoveryTitle: "重新連接",
+                title: L10n.text(.usbDisconnected),
+                message: L10n.text(.usbDisconnectedMessage),
+                recoveryTitle: L10n.text(.reconnectUSB),
                 recoveryAction: .reconnectUSB
             )
         case .authorizationDenied:
             Self(
-                title: "授權被拒絕",
-                message: "請解鎖 iPhone、信任這台 Mac，並核准需要的系統 helper。",
-                recoveryTitle: "完成授權後重試",
+                title: L10n.text(.authorizationDenied),
+                message: L10n.text(.authorizationDeniedMessage),
+                recoveryTitle: L10n.text(.finishAuthorizationAndRetry),
                 recoveryAction: .approveTrust
             )
         case .deviceLocked:
             Self(
-                title: "iPhone 螢幕已鎖定",
-                message: "iPhone 鎖定時無法完成準備。請解鎖 iPhone 並讓螢幕保持開啟後重試。",
-                recoveryTitle: "解鎖後重試",
+                title: L10n.text(.deviceLocked),
+                message: L10n.text(.deviceLockedMessage),
+                recoveryTitle: L10n.text(.unlockAndRetry),
                 recoveryAction: .unlockDevice
             )
         case let .prerequisiteFailed(stage, message):
             prerequisitePresentation(stage: stage, detail: message)
         case let .tunnelFailure(detail):
             Self(
-                title: "USB tunnel 失敗",
+                title: L10n.text(.usbTunnelFailure),
                 message: detail,
-                recoveryTitle: "重新核准並重試",
+                recoveryTitle: L10n.text(.approveAgainAndRetry),
                 recoveryAction: .approveHelper
             )
         case let .helperFailure(detail):
             Self(
-                title: "DVT helper 失敗",
-                message: "\(detail)。已停止位置更新，請重新準備裝置。",
-                recoveryTitle: "重新準備",
+                title: L10n.text(.dvtHelperFailure),
+                message: L10n.format(.helperFailureMessage, detail),
+                recoveryTitle: L10n.text(.prepareAgain),
                 recoveryAction: .retry
             )
         case let .clearFailed(detail):
             Self(
-                title: "尚未清除模擬定位",
-                message: "\(detail)。目前不能宣稱已恢復真實定位，請重試 clear。",
-                recoveryTitle: "重試清除",
+                title: L10n.text(.clearLocationFailure),
+                message: L10n.format(.clearFailureMessage, detail),
+                recoveryTitle: L10n.text(.retryClear),
                 recoveryAction: .retryClear
             )
         case .transportClosed:
             Self(
-                title: "裝置連線已中斷",
-                message: "DVT transport 已中斷，且自動恢復未完成。",
-                recoveryTitle: "重試",
+                title: L10n.text(.deviceConnectionInterrupted),
+                message: L10n.text(.deviceConnectionInterruptedMessage),
+                recoveryTitle: L10n.text(.retry),
                 recoveryAction: .retry
             )
         case let .transportFailure(detail):
             Self(
-                title: "裝置連線失敗",
+                title: L10n.text(.deviceConnectionFailure),
                 message: detail,
-                recoveryTitle: "重試",
+                recoveryTitle: L10n.text(.retry),
                 recoveryAction: .retry
             )
         default:
             Self(
-                title: "裝置尚未就緒",
+                title: L10n.text(.deviceNotReady),
                 message: String(describing: failure),
-                recoveryTitle: "重試",
+                recoveryTitle: L10n.text(.retry),
                 recoveryAction: .retry
             )
         }
@@ -393,37 +393,41 @@ struct DeviceFailurePresentation: Equatable, Sendable {
         switch stage {
         case .trust:
             Self(
-                title: "iPhone 尚未信任這台 Mac",
-                message: "\(detail)。請解鎖 iPhone 並完成信任提示。",
-                recoveryTitle: "完成信任後重試",
+                title: L10n.text(.iPhoneTrustRequired),
+                message: L10n.format(.trustMessage, detail),
+                recoveryTitle: L10n.text(.finishTrustAndRetry),
                 recoveryAction: .approveTrust
             )
         case .developerMode:
             Self(
-                title: "Developer Mode 未就緒",
-                message: "\(detail)。請到 iPhone「設定 → 隱私權與安全性 → 開發者模式」開啟並重新啟動。",
-                recoveryTitle: "完成設定後重試",
+                title: L10n.text(.developerModeNotReady),
+                message: L10n.format(.developerModeMessage, detail),
+                recoveryTitle: L10n.text(.finishSetupAndRetry),
                 recoveryAction: .enableDeveloperMode
             )
         case .developerDiskImage:
             Self(
-                title: "Developer Disk Image 無法準備",
-                message: "\(detail)。請確認 Xcode 支援此 iOS 版本後重試。",
-                recoveryTitle: "重新準備 DDI",
+                title: L10n.text(.developerDiskImageFailure),
+                message: L10n.format(.developerDiskImageMessage, detail),
+                recoveryTitle: L10n.text(.prepareDDIAgain),
                 recoveryAction: .prepareDeveloperDiskImage
             )
         case .tunnel:
             Self(
-                title: "USB tunnel prerequisite 未就緒",
+                title: L10n.text(.tunnelPrerequisiteFailure),
                 message: detail,
-                recoveryTitle: "核准 Helper",
+                recoveryTitle: L10n.text(.approveHelper),
                 recoveryAction: .approveHelper
             )
         default:
             Self(
-                title: "裝置 prerequisite 失敗",
-                message: "\(stage.rawValue)：\(detail)",
-                recoveryTitle: "重試",
+                title: L10n.text(.devicePrerequisiteFailure),
+                message: L10n.format(
+                    .prerequisiteFailureMessage,
+                    stage.rawValue,
+                    detail
+                ),
+                recoveryTitle: L10n.text(.retry),
                 recoveryAction: .retry
             )
         }

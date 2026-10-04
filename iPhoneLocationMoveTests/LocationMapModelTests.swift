@@ -925,7 +925,10 @@ final class LocationMapModelTests: XCTestCase {
         XCTAssertEqual(mapView.cameraOperationCounts, baselineCounts)
         assertRegion(mapView.region, equals: baselineRegion)
         XCTAssertEqual(
-            try annotation(titled: "預覽", in: mapView).coordinate.latitude,
+            try annotation(
+                titled: L10n.text(.previewAnnotation, language: .english),
+                in: mapView
+            ).coordinate.latitude,
             secondClicked.latitude,
             accuracy: 0.000_001
         )
@@ -1212,20 +1215,26 @@ final class LocationMapModelTests: XCTestCase {
         let cleanup = ResetConfirmationContent.make(
             hasCleanupOwnership: true
         )
-        XCTAssertEqual(cleanup.title, "確認重置並停止模擬？")
+        XCTAssertEqual(
+            cleanup.title,
+            L10n.text(.resetStopTitle, language: .english)
+        )
         XCTAssertTrue(
             cleanup.message.contains(
-                "只有手機回覆 clear 成功後，App 才會顯示已恢復真實定位。"
+                L10n.text(.resetStopMessage, language: .english)
             )
         )
 
         let localOnly = ResetConfirmationContent.make(
             hasCleanupOwnership: false
         )
-        XCTAssertEqual(localOnly.title, "確認重置設定？")
-        XCTAssertTrue(localOnly.message.contains("搜尋"))
+        XCTAssertEqual(
+            localOnly.title,
+            L10n.text(.resetSettingsTitle, language: .english)
+        )
+        XCTAssertTrue(localOnly.message.contains("search"))
         XCTAssertTrue(localOnly.message.contains("A/B"))
-        XCTAssertTrue(localOnly.message.contains("路線"))
+        XCTAssertTrue(localOnly.message.contains("route"))
     }
 
     func testProgrammaticCameraChangeIsNotReportedAsManualInteraction() {
@@ -1319,12 +1328,18 @@ final class LocationMapModelTests: XCTestCase {
             confirmedRouteMarkerCoordinate: firstIPhoneLocation
         )
 
-        let previewAnnotation = try annotation(titled: "預覽", in: mapView)
+        let previewAnnotation = try annotation(
+            titled: L10n.text(.previewAnnotation, language: .english),
+            in: mapView
+        )
         let endpointAAnnotation = try annotation(titled: "A", in: mapView)
         let endpointBAnnotation = try annotation(titled: "B", in: mapView)
-        let macAnnotation = try annotation(titled: "Mac 目前位置", in: mapView)
+        let macAnnotation = try annotation(
+            titled: L10n.text(.macCurrentLocation, language: .english),
+            in: mapView
+        )
         let iPhoneAnnotation = try annotation(
-            titled: "iPhone 模擬位置",
+            titled: L10n.text(.simulatedIPhoneLocation, language: .english),
             in: mapView
         )
         let routeOverlay = try XCTUnwrap(mapView.overlays.first)
@@ -1343,7 +1358,10 @@ final class LocationMapModelTests: XCTestCase {
         )
 
         XCTAssertIdentical(
-            try annotation(titled: "預覽", in: mapView),
+            try annotation(
+                titled: L10n.text(.previewAnnotation, language: .english),
+                in: mapView
+            ),
             previewAnnotation
         )
         XCTAssertIdentical(
@@ -1355,11 +1373,17 @@ final class LocationMapModelTests: XCTestCase {
             endpointBAnnotation
         )
         XCTAssertIdentical(
-            try annotation(titled: "Mac 目前位置", in: mapView),
+            try annotation(
+                titled: L10n.text(.macCurrentLocation, language: .english),
+                in: mapView
+            ),
             macAnnotation
         )
         XCTAssertIdentical(
-            try annotation(titled: "iPhone 模擬位置", in: mapView),
+            try annotation(
+                titled: L10n.text(.simulatedIPhoneLocation, language: .english),
+                in: mapView
+            ),
             iPhoneAnnotation
         )
         XCTAssertEqual(
@@ -1388,9 +1412,19 @@ final class LocationMapModelTests: XCTestCase {
             confirmedRouteMarkerCoordinate: nil
         )
 
-        XCTAssertNil(mapView.annotations.first { $0.title == "iPhone 模擬位置" })
+        XCTAssertNil(
+            mapView.annotations.first {
+                $0.title == L10n.text(
+                    .simulatedIPhoneLocation,
+                    language: .english
+                )
+            }
+        )
         XCTAssertIdentical(
-            try annotation(titled: "預覽", in: mapView),
+            try annotation(
+                titled: L10n.text(.previewAnnotation, language: .english),
+                in: mapView
+            ),
             previewAnnotation
         )
         XCTAssertIdentical(
@@ -1402,7 +1436,10 @@ final class LocationMapModelTests: XCTestCase {
             endpointBAnnotation
         )
         XCTAssertIdentical(
-            try annotation(titled: "Mac 目前位置", in: mapView),
+            try annotation(
+                titled: L10n.text(.macCurrentLocation, language: .english),
+                in: mapView
+            ),
             macAnnotation
         )
         XCTAssertIdentical(try XCTUnwrap(mapView.overlays.first), routeOverlay)
@@ -1581,7 +1618,7 @@ final class LocationMapModelTests: XCTestCase {
 
         let endpointAnnotation = try annotation(titled: "A", in: mapView)
         let iPhoneAnnotation = try annotation(
-            titled: "iPhone 模擬位置",
+            titled: L10n.text(.simulatedIPhoneLocation, language: .english),
             in: mapView
         )
         let endpointView = try XCTUnwrap(

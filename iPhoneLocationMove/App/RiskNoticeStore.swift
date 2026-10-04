@@ -6,19 +6,35 @@ struct RiskNotice: Equatable, Sendable {
     let message: String
     let confirmationTitle: String
 
-    static let firstUse = Self(
-        title: "使用前請先了解風險",
-        message:
-            "位置模擬可能受第三方服務條款限制，並可能影響帳號。請先自行確認你使用之服務的規則。",
-        confirmationTitle: "我已了解"
-    )
+    static var firstUse: Self {
+        firstUse(for: .current)
+    }
 
-    static let simulationStart = Self(
-        title: "確認開始位置模擬？",
-        message:
-            "這會改變已連接 iPhone 的模擬位置。第三方服務可能限制此行為，請自行承擔相關帳號風險。",
-        confirmationTitle: "了解風險並開始"
-    )
+    static var simulationStart: Self {
+        simulationStart(for: .current)
+    }
+
+    static func firstUse(for language: AppLanguage) -> Self {
+        Self(
+            title: L10n.text(.firstUseRiskTitle, language: language),
+            message: L10n.text(.firstUseRiskMessage, language: language),
+            confirmationTitle: L10n.text(
+                .firstUseRiskConfirmation,
+                language: language
+            )
+        )
+    }
+
+    static func simulationStart(for language: AppLanguage) -> Self {
+        Self(
+            title: L10n.text(.simulationRiskTitle, language: language),
+            message: L10n.text(.simulationRiskMessage, language: language),
+            confirmationTitle: L10n.text(
+                .simulationRiskConfirmation,
+                language: language
+            )
+        )
+    }
 }
 
 @MainActor
@@ -27,7 +43,9 @@ final class RiskNoticeStore: ObservableObject {
         "hasAcknowledgedThirdPartyLocationSimulationRisk"
 
     @Published private(set) var needsFirstUseAcknowledgement: Bool
-    let firstUseNotice = RiskNotice.firstUse
+    var firstUseNotice: RiskNotice {
+        RiskNotice.firstUse
+    }
 
     private let defaults: UserDefaults
 

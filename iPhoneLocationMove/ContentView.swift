@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject var appDelegate: AppDelegate
+    @ObservedObject private var languageStore = AppLanguageStore.shared
 
     var body: some View {
         VStack(spacing: 0) {
@@ -16,16 +17,21 @@ struct ContentView: View {
                 VStack(spacing: 12) {
                     Image(systemName: "exclamationmark.triangle")
                         .font(.system(size: 36))
-                    Text("無法建立裝置支援環境")
+                    Text(L10n.text(.configurationFailure))
                         .font(.title2)
                     Text(configurationFailure)
                         .foregroundStyle(.secondary)
                 }
             } else {
-                ProgressView("正在檢查裝置支援環境…")
+                ProgressView(L10n.text(.checkingDeviceSupport))
             }
         }
         .frame(minWidth: 900, minHeight: 620)
+        .toolbar {
+            ToolbarItem(placement: .automatic) {
+                LanguageMenu(languageStore: languageStore)
+            }
+        }
         .alert(
             appDelegate.riskNoticeStore.firstUseNotice.title,
             isPresented: Binding(
@@ -97,46 +103,54 @@ private struct DeviceSetupView: View {
     private var status: some View {
         switch store.state {
         case .idle, .checkingRuntime:
-            ProgressView("正在檢查 pymobiledevice3…")
+            ProgressView(L10n.text(.checkingPymobiledevice3))
         case .runtimeInstallationRequired:
-            Label("需要安裝 App 專用裝置支援", systemImage: "shippingbox")
+            Label(L10n.text(.runtimeInstallationRequired), systemImage: "shippingbox")
         case .pythonUnavailable(let version):
             Label(
-                "找不到 Python \(version)+；請先從 python.org 或 Homebrew 安裝 Python。",
+                L10n.format(.pythonUnavailable, version),
                 systemImage: "exclamationmark.triangle"
             )
         case .incompleteRuntime:
-            Label("App 專用環境不完整，可安全重試安裝。", systemImage: "arrow.clockwise")
+            Label(L10n.text(.runtimeIncomplete), systemImage: "arrow.clockwise")
         case .installing(let progress):
             ProgressView(installProgressText(progress))
         case .helperApprovalRequired:
-            Label("需要管理員核准 USB tunnel helper", systemImage: "lock.shield")
+            Label(L10n.text(.helperApprovalRequired), systemImage: "lock.shield")
         case .helperRequiresSystemApproval:
             Label(
-                "請到「系統設定 → 一般 → 登入項目與延伸功能」允許 helper。",
+                L10n.text(.helperRequiresSystemApproval),
                 systemImage: "gearshape"
             )
         case .discoveringDevices:
-            ProgressView("正在偵測 USB iPhone…")
+            ProgressView(L10n.text(.discoveringDevices))
         case .noUSBDevice:
             Label(
-                "找不到 USB iPhone；請解鎖手機、確認資料線並信任這台 Mac。",
+                L10n.text(.noUSBDevice),
                 systemImage: "cable.connector"
             )
         case .selectionRequired(let devices):
-            Label("偵測到 \(devices.count) 台 iPhone，請選擇一台。", systemImage: "iphone.gen3")
+            Label(
+                L10n.format(.selectionRequired, devices.count),
+                systemImage: "iphone.gen3"
+            )
         case .unsupported(let device):
             Label(
-                "\(device.name)・iOS \(versionText(device)) 不支援；需要 iOS 17+。",
+                L10n.format(.unsupportedDevice, device.name, versionText(device)),
                 systemImage: "iphone.slash"
             )
         case .preparing(let device):
             ProgressView(
-                device.map { "正在準備 \($0.name)…" } ?? "正在準備裝置…"
+                device.map { L10n.format(.preparingDevice, $0.name) }
+                    ?? L10n.text(.preparingDevice)
             )
         case .ready(let session):
             Label(
-                "\(session.device.name)・iOS \(versionText(session.device)) 已就緒",
+                L10n.format(
+                    .readyDevice,
+                    session.device.name,
+                    versionText(session.device)
+                ),
                 systemImage: "checkmark.circle.fill"
             )
             .foregroundStyle(.green)
@@ -153,27 +167,31 @@ private struct DeviceSetupView: View {
     private var actions: some View {
         switch store.state {
         case .runtimeInstallationRequired, .incompleteRuntime:
-            Button("安裝裝置支援") {
+            Button(L10n.text(.installDeviceSupport)) {
                 Task { await store.installRuntime() }
             }
         case .installing:
-            Button("取消") {
+            Button(L10n.text(.cancel)) {
                 Task { await store.cancelRuntimeInstallation() }
             }
         case .helperApprovalRequired:
-            Button("核准 Helper") {
+            Button(L10n.text(.approveHelper)) {
                 Task { await store.requestHelperApproval() }
             }
         case .helperRequiresSystemApproval, .noUSBDevice,
              .failed, .configurationFailure:
-            Button("重試") {
+            Button(L10n.text(.retry)) {
                 Task { await store.retry() }
             }
         case .selectionRequired(let devices):
-            Menu("選擇 iPhone") {
+            Menu(L10n.text(.chooseIPhone)) {
                 ForEach(devices, id: \.id) { device in
                     Button(
-                        "\(device.name)・iOS \(versionText(device))"
+                        L10n.format(
+                            .selectIPhone,
+                            device.name,
+                            versionText(device)
+                        )
                     ) {
                         Task { await store.selectDevice(device.id) }
                     }
@@ -189,13 +207,13 @@ private struct DeviceSetupView: View {
     ) -> String {
         switch progress {
         case .checkingPython:
-            "正在檢查 Python…"
+            L10n.text(.checkingPython)
         case .creatingEnvironment:
-            "正在建立 App 專用環境…"
+            L10n.text(.creatingEnvironment)
         case .installingPinnedPackage:
-            "正在安裝固定版本 pymobiledevice3…"
+            L10n.text(.installingPinnedPackage)
         case .verifyingCapabilities:
-            "正在驗證裝置功能…"
+            L10n.text(.verifyingCapabilities)
         }
     }
 

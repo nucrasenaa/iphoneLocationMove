@@ -44,7 +44,7 @@ final class RiskNoticeStoreTests: XCTestCase {
         XCTAssertFalse(copy.contains("不可偵測"))
         XCTAssertFalse(copy.contains("規避"))
         XCTAssertFalse(copy.contains("帳號安全保證"))
-        XCTAssertTrue(copy.contains("第三方服務"))
-        XCTAssertTrue(copy.contains("帳號風險"))
+        XCTAssertTrue(copy.lowercased().contains("third-party"))
+        XCTAssertTrue(copy.lowercased().contains("account"))
     }
 }

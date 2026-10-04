@@ -295,11 +295,14 @@ private enum PrivilegedHelperAcceptanceRunner {
 @main
 struct iPhoneLocationMoveApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    @StateObject private var languageStore = AppLanguageStore.shared
 
     var body: some Scene {
         WindowGroup(id: AppWindow.mainID) {
             ContentView(appDelegate: appDelegate)
                 .environmentObject(appDelegate.lifecycleCoordinator)
+                .environmentObject(languageStore)
+                .environment(\.locale, languageStore.language.locale)
         }
         .commands {
             MainWindowCommands()
@@ -397,11 +400,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
 
     private func confirmActiveSimulationQuit() -> Bool {
         let alert = NSAlert()
-        alert.messageText = "停止模擬並退出？"
-        alert.informativeText =
-            "App 會先停止位置更新、清除模擬定位，再關閉 DVT 與 tunnel。"
-        alert.addButton(withTitle: "停止並退出")
-        alert.addButton(withTitle: "取消")
+        alert.messageText = L10n.text(.quitSimulationTitle)
+        alert.informativeText = L10n.text(.quitSimulationMessage)
+        alert.addButton(withTitle: L10n.text(.quitSimulationConfirm))
+        alert.addButton(withTitle: L10n.text(.quitCancel))
         return alert.runModal() == .alertFirstButtonReturn
     }
 
@@ -414,12 +416,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     private func cleanupFailureAction() -> CleanupFailureAction {
         let alert = NSAlert()
         alert.alertStyle = .critical
-        alert.messageText = "無法安全完成退出清理"
-        alert.informativeText =
-            "手機可能仍維持模擬位置。你可以重試，或進一步選擇強制退出。"
-        alert.addButton(withTitle: "重試")
-        alert.addButton(withTitle: "強制退出…")
-        alert.addButton(withTitle: "取消")
+        alert.messageText = L10n.text(.cleanupFailureTitle)
+        alert.informativeText = L10n.text(.cleanupFailureMessage)
+        alert.addButton(withTitle: L10n.text(.retry))
+        alert.addButton(withTitle: L10n.text(.forceQuit))
+        alert.addButton(withTitle: L10n.text(.quitCancel))
         switch alert.runModal() {
         case .alertFirstButtonReturn:
             return .retry
@@ -433,11 +434,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     private func confirmUnsafeForceQuit() -> Bool {
         let alert = NSAlert()
         alert.alertStyle = .critical
-        alert.messageText = "確定強制退出？"
-        alert.informativeText =
-            "這不代表已恢復真實定位；iPhone 可能仍保留模擬座標。"
-        alert.addButton(withTitle: "仍要強制退出")
-        alert.addButton(withTitle: "取消")
+        alert.messageText = L10n.text(.forceQuitTitle)
+        alert.informativeText = L10n.text(.forceQuitMessage)
+        alert.addButton(withTitle: L10n.text(.forceQuitConfirm))
+        alert.addButton(withTitle: L10n.text(.quitCancel))
         return alert.runModal() == .alertFirstButtonReturn
     }
 
@@ -453,10 +453,11 @@ enum AppWindow {
 
 private struct MainWindowCommands: Commands {
     @Environment(\.openWindow) private var openWindow
+    @ObservedObject private var languageStore = AppLanguageStore.shared
 
     var body: some Commands {
         CommandGroup(after: .windowArrangement) {
-            Button("開啟定位控制") {
+            Button(L10n.text(.openLocationControl, language: languageStore.language)) {
                 openWindow(id: AppWindow.mainID)
             }
             .keyboardShortcut("0", modifiers: .command)

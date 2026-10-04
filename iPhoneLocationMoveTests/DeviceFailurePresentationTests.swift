@@ -34,16 +34,16 @@ final class DeviceFailurePresentationTests: XCTestCase {
         )
 
         XCTAssertEqual(presentation.recoveryAction, .retryClear)
-        XCTAssertTrue(presentation.message.contains("不能宣稱"))
-        XCTAssertTrue(presentation.message.contains("恢復真實定位"))
+        XCTAssertTrue(presentation.message.contains("cannot be declared restored"))
+        XCTAssertTrue(presentation.message.contains("real location"))
     }
 
     func testDeviceLockedTellsUserToUnlockInsteadOfShowingDDIFailure() {
         let presentation = DeviceFailurePresentation.make(for: .deviceLocked)
 
         XCTAssertEqual(presentation.recoveryAction, .unlockDevice)
-        XCTAssertTrue(presentation.title.contains("鎖定"))
-        XCTAssertTrue(presentation.message.contains("解鎖"))
+        XCTAssertTrue(presentation.title.contains("locked"))
+        XCTAssertTrue(presentation.message.contains("Unlock"))
     }
 
     func testUSBAndUncertainFailuresDoNotUseReadyOrActiveLanguage() {
@@ -55,9 +55,9 @@ final class DeviceFailurePresentationTests: XCTestCase {
         ] {
             let presentation = DeviceFailurePresentation.make(for: failure)
             let copy = presentation.title + presentation.message
-            XCTAssertFalse(copy.contains("已就緒"))
-            XCTAssertFalse(copy.contains("模擬中"))
-            XCTAssertFalse(copy.contains("已清除"))
+            XCTAssertFalse(copy.contains("ready"))
+            XCTAssertFalse(copy.contains("simulating"))
+            XCTAssertFalse(copy.contains("cleared"))
         }
     }
 }
