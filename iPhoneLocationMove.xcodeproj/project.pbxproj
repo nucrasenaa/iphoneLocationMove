@@ -380,15 +380,15 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					2E6A871B7E6FE7E2569276E9 = {
-						DevelopmentTeam = 2LRM76M575;
+						DevelopmentTeam = RGQEG5K4RD;
 						ProvisioningStyle = Automatic;
 					};
 					58424766B681329BC1A55C47 = {
-						DevelopmentTeam = 2LRM76M575;
+						DevelopmentTeam = RGQEG5K4RD;
 						ProvisioningStyle = Automatic;
 					};
 					B92D5DB476CEB477D8408079 = {
-						DevelopmentTeam = 2LRM76M575;
+						DevelopmentTeam = RGQEG5K4RD;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -560,7 +560,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 2LRM76M575;
+				DEVELOPMENT_TEAM = RGQEG5K4RD;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -703,7 +703,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 2LRM76M575;
+				DEVELOPMENT_TEAM = RGQEG5K4RD;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;

@@ -7,7 +7,7 @@ options:
 settings:
   base:
     SWIFT_VERSION: "6.0"
-    DEVELOPMENT_TEAM: 2LRM76M575
+    DEVELOPMENT_TEAM: RGQEG5K4RD
     CODE_SIGN_STYLE: Automatic
     CODE_SIGN_IDENTITY: Apple Development
     MACOSX_DEPLOYMENT_TARGET: "13.0"

@@ -14,7 +14,7 @@
     <string>1</string>
     <key>SMAuthorizedClients</key>
     <array>
-        <string>identifier "com.cash.iPhoneLocationMove" and anchor apple generic and certificate leaf[subject.OU] = "2LRM76M575"</string>
+        <string>identifier "com.cash.iPhoneLocationMove" and anchor apple generic and certificate leaf[subject.OU] = "RGQEG5K4RD"</string>
     </array>
 </dict>
 </plist>

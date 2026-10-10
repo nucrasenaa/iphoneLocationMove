@@ -4,11 +4,11 @@ set -u
 TESTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPOSITORY_DIR="$(cd "$TESTS_DIR/../.." && pwd)"
 PACKAGE_SCRIPT="$REPOSITORY_DIR/Scripts/package-app.sh"
-EXPECTED_TEAM="2LRM76M575"
+EXPECTED_TEAM="RGQEG5K4RD"
 EXPECTED_APP_IDENTIFIER="com.cash.iPhoneLocationMove"
 EXPECTED_HELPER_IDENTIFIER="com.cash.iPhoneLocationMoveTunnelHelper"
-EXPECTED_APP_REQUIREMENT="identifier \"com.cash.iPhoneLocationMove\" and anchor apple generic and certificate leaf[subject.OU] = \"2LRM76M575\""
-EXPECTED_HELPER_REQUIREMENT="identifier \"com.cash.iPhoneLocationMoveTunnelHelper\" and anchor apple generic and certificate leaf[subject.OU] = \"2LRM76M575\""
+EXPECTED_APP_REQUIREMENT="identifier \"com.cash.iPhoneLocationMove\" and anchor apple generic and certificate leaf[subject.OU] = \"RGQEG5K4RD\""
+EXPECTED_HELPER_REQUIREMENT="identifier \"com.cash.iPhoneLocationMoveTunnelHelper\" and anchor apple generic and certificate leaf[subject.OU] = \"RGQEG5K4RD\""
 
 PASS_COUNT=0
 FAIL_COUNT=0
@@ -176,7 +176,7 @@ write_shims() {
         '    printf "fake helper\n" > "$helper_path"' \
         '    [ "${FAKE_OMIT_HELPER:-0}" = "1" ] && rm -f "$helper_path"' \
         '    bundle_version="${FAKE_BUNDLE_VERSION:-$version}"' \
-        '    app_requirement="${FAKE_APP_REQUIREMENT:-identifier \"com.cash.iPhoneLocationMoveTunnelHelper\" and anchor apple generic and certificate leaf[subject.OU] = \"2LRM76M575\"}"' \
+        '    app_requirement="${FAKE_APP_REQUIREMENT:-identifier \"com.cash.iPhoneLocationMoveTunnelHelper\" and anchor apple generic and certificate leaf[subject.OU] = \"RGQEG5K4RD\"}"' \
         '    printf "%s\n" "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" "<plist version=\"1.0\"><dict>" "<key>CFBundleShortVersionString</key><string>$bundle_version</string>" "<key>SMPrivilegedExecutables</key><dict><key>com.cash.iPhoneLocationMoveTunnelHelper</key><string>$app_requirement</string></dict>" "</dict></plist>" > "$app_path/Contents/Info.plist"' \
         '    ;;' \
         'esac' \
@@ -206,9 +206,9 @@ write_shims() {
         '    ;;' \
         '  *" -dv "*)' \
         '    if printf "%s" "$target" | grep -q "iPhoneLocationMove.app$"; then' \
-        '      printf "Identifier=%s\nTeamIdentifier=%s\n" "${FAKE_APP_IDENTIFIER:-com.cash.iPhoneLocationMove}" "${FAKE_APP_TEAM:-2LRM76M575}" >&2' \
+        '      printf "Identifier=%s\nTeamIdentifier=%s\n" "${FAKE_APP_IDENTIFIER:-com.cash.iPhoneLocationMove}" "${FAKE_APP_TEAM:-RGQEG5K4RD}" >&2' \
         '    else' \
-        '      printf "Identifier=%s\nTeamIdentifier=%s\n" "${FAKE_HELPER_IDENTIFIER:-com.cash.iPhoneLocationMoveTunnelHelper}" "${FAKE_HELPER_TEAM:-2LRM76M575}" >&2' \
+        '      printf "Identifier=%s\nTeamIdentifier=%s\n" "${FAKE_HELPER_IDENTIFIER:-com.cash.iPhoneLocationMoveTunnelHelper}" "${FAKE_HELPER_TEAM:-RGQEG5K4RD}" >&2' \
         '    fi' \
         '    ;;' \
         'esac' \
@@ -238,7 +238,7 @@ write_shims() {
         'printf "\n" >> "$COMMAND_LOG"' \
         'status="${FAKE_OTOOL_STATUS:-0}"' \
         '[ "$status" -eq 0 ] || exit "$status"' \
-        'helper_requirement="${FAKE_HELPER_REQUIREMENT:-identifier \"com.cash.iPhoneLocationMove\" and anchor apple generic and certificate leaf[subject.OU] = \"2LRM76M575\"}"' \
+        'helper_requirement="${FAKE_HELPER_REQUIREMENT:-identifier \"com.cash.iPhoneLocationMove\" and anchor apple generic and certificate leaf[subject.OU] = \"RGQEG5K4RD\"}"' \
         'printf "%s\n" "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" "<plist version=\"1.0\"><dict><key>SMAuthorizedClients</key><array><string>$helper_requirement</string></array></dict></plist>" |' \
         '  /usr/bin/xxd -p -c 4 |' \
         '  while IFS= read -r word; do' \
@@ -567,13 +567,13 @@ test_identity_and_requirement_failures() {
     assert_failure_before_dmg
 
     setup_case app_requirement
-    export FAKE_APP_REQUIREMENT="identifier \"wrong.helper\" and anchor apple generic and certificate leaf[subject.OU] = \"2LRM76M575\""
+    export FAKE_APP_REQUIREMENT="identifier \"wrong.helper\" and anchor apple generic and certificate leaf[subject.OU] = \"RGQEG5K4RD\""
     run_package --skip-tests
     assert_failure_before_dmg
 
     setup_case embedded_requirement
     assert_file_exists "$FIXTURE_PROJECT/iPhoneLocationMoveTunnelHelper/HelperInfo.plist"
-    export FAKE_HELPER_REQUIREMENT="identifier \"wrong.app\" and anchor apple generic and certificate leaf[subject.OU] = \"2LRM76M575\""
+    export FAKE_HELPER_REQUIREMENT="identifier \"wrong.app\" and anchor apple generic and certificate leaf[subject.OU] = \"RGQEG5K4RD\""
     run_package --skip-tests
     assert_failure_before_dmg
 }

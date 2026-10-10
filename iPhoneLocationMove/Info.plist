@@ -29,7 +29,7 @@
     <key>SMPrivilegedExecutables</key>
     <dict>
         <key>com.cash.iPhoneLocationMoveTunnelHelper</key>
-        <string>identifier "com.cash.iPhoneLocationMoveTunnelHelper" and anchor apple generic and certificate leaf[subject.OU] = "2LRM76M575"</string>
+        <string>identifier "com.cash.iPhoneLocationMoveTunnelHelper" and anchor apple generic and certificate leaf[subject.OU] = "RGQEG5K4RD"</string>
     </dict>
 </dict>
 </plist>

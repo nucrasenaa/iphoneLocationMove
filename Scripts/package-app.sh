@@ -17,9 +17,9 @@ APP_INFO_PATH="$APP_PATH/Contents/Info.plist"
 HELPER_PATH="$APP_PATH/Contents/Library/LaunchServices/com.cash.iPhoneLocationMoveTunnelHelper"
 EXPECTED_APP_IDENTIFIER="com.cash.iPhoneLocationMove"
 EXPECTED_HELPER_IDENTIFIER="com.cash.iPhoneLocationMoveTunnelHelper"
-EXPECTED_TEAM="2LRM76M575"
-EXPECTED_APP_REQUIREMENT='identifier "com.cash.iPhoneLocationMove" and anchor apple generic and certificate leaf[subject.OU] = "2LRM76M575"'
-EXPECTED_HELPER_REQUIREMENT='identifier "com.cash.iPhoneLocationMoveTunnelHelper" and anchor apple generic and certificate leaf[subject.OU] = "2LRM76M575"'
+EXPECTED_TEAM="RGQEG5K4RD"
+EXPECTED_APP_REQUIREMENT='identifier "com.cash.iPhoneLocationMove" and anchor apple generic and certificate leaf[subject.OU] = "RGQEG5K4RD"'
+EXPECTED_HELPER_REQUIREMENT='identifier "com.cash.iPhoneLocationMoveTunnelHelper" and anchor apple generic and certificate leaf[subject.OU] = "RGQEG5K4RD"'
 
 CLEAN_BUILD=true
 SKIP_TESTS=false
